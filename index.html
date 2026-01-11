@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Market Prediction</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #718096;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        label {
+            display: block;
+            color: #4a5568;
+            font-weight: 500;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        input[type="number"],
+        input[type="date"] {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #fff;
+        }
+
+        input[type="number"]:focus,
+        input[type="date"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .predict-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .predict-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .predict-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .result {
+            display: none;
+            margin-top: 30px;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result.success {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+        }
+
+        .result.error {
+            background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+            color: white;
+        }
+
+        .prediction-value {
+            font-size: 3rem;
+            font-weight: 700;
+            margin: 10px 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .result-details {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-top: 10px;
+        }
+
+        .confidence {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-top: 10px;
+        }
+
+        .sample-data-btn {
+            background: transparent;
+            color: #667eea;
+            border: 2px solid #667eea;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .sample-data-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #a0aec0;
+            font-size: 0.9rem;
+        }
+
+        .footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .full-width {
+                grid-column: 1 / 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📈 Stock Predictor</h1>
+        <p class="subtitle">Predict market trends using advanced machine learning</p>
+
+        <form id="predictionForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="msft">Microsoft (MSFT)</label>
+                    <input type="number" id="msft" step="0.01" placeholder="e.g., 23.95" required>
+                </div>
+                <div class="form-group">
+                    <label for="ibm">IBM</label>
+                    <input type="number" id="ibm" step="0.01" placeholder="e.g., 80.52" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="sbux">Starbucks (SBUX)</label>
+                    <input type="number" id="sbux" step="0.01" placeholder="e.g., 16.15" required>
+                </div>
+                <div class="form-group">
+                    <label for="aapl">Apple (AAPL)</label>
+                    <input type="number" id="aapl" step="0.01" placeholder="e.g., 11.09" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="gspc">S&P 500 (GSPC)</label>
+                    <input type="number" id="gspc" step="0.01" placeholder="e.g., 1416.60" required>
+                </div>
+                <div class="form-group">
+                    <label for="date">Date</label>
+                    <input type="date" id="date" required>
+                </div>
+            </div>
+
+            <button type="submit" class="predict-btn" id="predictBtn">
+                🔮 Predict Market Year
+            </button>
+        </form>
+
+        <button class="sample-data-btn" onclick="loadSampleData()">
+            📊 Load Sample Data
+        </button>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Analyzing market data...</p>
+        </div>
+
+        <div class="result" id="result"></div>
+
+        <div class="footer">
+            <p>Powered by RandomForest ML Model | <a href="/health" target="_blank">API Status</a></p>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('predictionForm');
+        const predictBtn = document.getElementById('predictBtn');
+        const loading = document.getElementById('loading');
+        const result = document.getElementById('result');
+
+        // Set default date to today
+        document.getElementById('date').valueAsDate = new Date();
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Show loading state
+            loading.style.display = 'block';
+            result.style.display = 'none';
+            predictBtn.disabled = true;
+            predictBtn.textContent = 'Analyzing...';
+
+            // Get form data
+            const formData = {
+                MSFT: parseFloat(document.getElementById('msft').value),
+                IBM: parseFloat(document.getElementById('ibm').value),
+                SBUX: parseFloat(document.getElementById('sbux').value),
+                AAPL: parseFloat(document.getElementById('aapl').value),
+                GSPC: parseFloat(document.getElementById('gspc').value),
+                date: document.getElementById('date').value
+            };
+
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                // Hide loading
+                loading.style.display = 'none';
+
+                if (response.ok) {
+                    // Show success result
+                    result.className = 'result success';
+                    result.innerHTML = `
+                        <div class="prediction-value">${data.prediction}</div>
+                        <p>Predicted Market Year</p>
+                        <div class="result-details">
+                            <div class="confidence">${data.model_confidence}</div>
+                            <br>
+                            <small>Scaled prediction: ${data.scaled_prediction.toFixed(4)}</small>
+                        </div>
+                    `;
+                    result.style.display = 'block';
+                } else {
+                    // Show error result
+                    result.className = 'result error';
+                    result.innerHTML = `
+                        <div style="font-size: 2rem; margin-bottom: 10px;">❌</div>
+                        <p>Error: ${data.error}</p>
+                    `;
+                    result.style.display = 'block';
+                }
+
+            } catch (error) {
+                // Hide loading
+                loading.style.display = 'none';
+
+                // Show error result
+                result.className = 'result error';
+                result.innerHTML = `
+                    <div style="font-size: 2rem; margin-bottom: 10px;">❌</div>
+                    <p>Connection Error</p>
+                    <div class="result-details">
+                        <small>Please make sure the Flask server is running</small>
+                    </div>
+                `;
+                result.style.display = 'block';
+                console.error('Error:', error);
+            }
+
+            // Reset button
+            predictBtn.disabled = false;
+            predictBtn.textContent = '🔮 Predict Market Year';
+        });
+
+        function loadSampleData() {
+            // Sample data from the first row of stockdata.csv
+            document.getElementById('msft').value = '23.950705';
+            document.getElementById('ibm').value = '80.517962';
+            document.getElementById('sbux').value = '16.149666';
+            document.getElementById('aapl').value = '11.086612';
+            document.getElementById('gspc').value = '1416.599976';
+            document.getElementById('date').value = '2007-01-03';
+        }
+
+        // Add some visual feedback for form inputs
+        const inputs = document.querySelectorAll('input');
+        inputs.forEach(input => {
+            input.addEventListener('focus', () => {
+                input.parentElement.style.transform = 'translateY(-2px)';
+            });
+
+            input.addEventListener('blur', () => {
+                input.parentElement.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body>
+</html>
