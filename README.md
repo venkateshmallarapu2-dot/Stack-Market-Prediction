@@ -1,184 +1,116 @@
-# Stock Market Prediction API
-
-A Flask-based REST API for stock market year prediction using a trained RandomForest model.
-
-## Features
-
-- **Stock Price Prediction**: Predicts the year based on stock prices (MSFT, IBM, SBUX, AAPL, GSPC)
-- **Date-based Features**: Automatically extracts day, month, and year features from input dates
-- **Data Scaling**: Properly scales input data using the same scaler used during training
-- **RESTful Endpoints**: Clean API endpoints for predictions and model information
-
-## Installation
-
-1. Install the required dependencies:
-```bash
-pip install -r requirements.txt
-```
-
-2. Make sure your model file `best_random_forest.pkl` and data file `stockdata.csv` are in the same directory as `app.py`.
-
-## Quick Start
-
-Run the demo script to automatically start the server and open your browser:
-
-```bash
-python demo.py
-```
-
-Or start manually:
-
-```bash
-python app.py
-```
-
-Then visit `http://localhost:5000` in your browser.
-
-## Usage
-
-### Start the Server
-
-```bash
-python app.py
-```
-
-The server will start on `http://localhost:5000`
-
-### Access the Web Interface
-
-Open your browser and navigate to `http://localhost:5000` to use the beautiful web interface, or use the API endpoints directly.
-
-#### Web Interface Features
-
-- **Modern UI**: Beautiful gradient design with responsive layout
-- **Real-time Predictions**: Instant results with loading animations
-- **Sample Data**: One-click loading of sample stock data
-- **Error Handling**: Clear error messages and validation
-- **Mobile Friendly**: Works perfectly on all devices
-
-### API Endpoints
-
-#### 1. Home - API Information
-```
-GET /
-```
-Returns API information and available endpoints.
-
-#### 2. Health Check
-```
-GET /health
-```
-Returns the health status of the API and model.
-
-#### 3. Model Information
-```
-GET /model-info
-```
-Returns information about the loaded model including parameters and features.
-
-#### 4. Make Prediction
-```
-POST /predict
-```
-
-**Request Body:**
-```json
-{
-    "MSFT": 23.950705,
-    "IBM": 80.517962,
-    "SBUX": 16.149666,
-    "AAPL": 11.086612,
-    "GSPC": 1416.599976,
-    "date": "2007-01-03"
-}
-```
-
-**Response:**
-```json
-{
-    "prediction": 2007,
-    "scaled_prediction": -1.5461474734420662,
-    "input_features": {
-        "MSFT": 23.950705,
-        "IBM": 80.517962,
-        "SBUX": 16.149666,
-        "AAPL": 11.086612,
-        "GSPC": 1416.599976,
-        "date": "2007-01-03"
-    },
-    "model_confidence": "High (R² > 0.99 on test data)"
-}
-```
-
-### Input Parameters
-
-- `MSFT`: Microsoft stock price (float)
-- `IBM`: IBM stock price (float)
-- `SBUX`: Starbucks stock price (float)
-- `AAPL`: Apple stock price (float)
-- `GSPC`: S&P 500 index value (float)
-- `date`: Date in YYYY-MM-DD format (string)
-
-### Example Usage with Python
-
-```python
-import requests
-
-# Test data
-data = {
-    "MSFT": 23.950705,
-    "IBM": 80.517962,
-    "SBUX": 16.149666,
-    "AAPL": 11.086612,
-    "GSPC": 1416.599976,
-    "date": "2007-01-03"
-}
-
-# Make prediction
-response = requests.post("http://localhost:5000/predict", json=data)
-result = response.json()
-
-print(f"Predicted year: {result['prediction']}")
-```
-
-### Example Usage with curl
-
-```bash
-curl -X POST "http://localhost:5000/predict" \
-     -H "Content-Type: application/json" \
-     -d '{
-       "MSFT": 23.950705,
-       "IBM": 80.517962,
-       "SBUX": 16.149666,
-       "AAPL": 11.086612,
-       "GSPC": 1416.599976,
-       "date": "2007-01-03"
-     }'
-```
-
-## Model Details
-
-- **Algorithm**: RandomForestRegressor
-- **Training Data**: Historical stock prices from 2007 onwards
-- **Features**: MSFT, IBM, SBUX, AAPL, GSPC stock prices + date features (day, month)
-- **Target**: Year (predicted)
-- **Performance**: R² > 0.99 on test data
-
-## Error Handling
-
-The API includes comprehensive error handling for:
-- Missing required features
-- Invalid data formats
-- Model/scaler loading issues
-- Unexpected errors
-
-All errors return appropriate HTTP status codes and descriptive error messages.
-
-## Production Deployment
-
-For production deployment, consider:
-- Using a production WSGI server (gunicorn, uWSGI)
-- Adding authentication/authorization
-- Implementing rate limiting
-- Adding logging and monitoring
-- Using environment variables for configuration
+Stock Market Prediction System
+1. Introduction
+Stock market prediction is the process of forecasting future stock prices or market trends using historical data and machine learning techniques.
+This project uses Random Forest, a powerful ensemble learning algorithm, to analyze past stock prices of major companies and market indices and predict future movements.
+The system helps investors, analysts, and financial institutions make better trading and investment decisions.
+2. Objective of the Project
+The main goals of this project are:
+To analyze historical stock market data
+To identify hidden patterns and trends
+To predict future stock prices or market direction
+To compare different stock behaviors
+To reduce investment risk using data-driven decisions
+3. Dataset Description
+The project uses historical data of the following stocks and indices:
+Symbol
+Description
+MSFT
+Microsoft Corporation
+IBM
+International Business Machines
+AAPL
+Apple Inc
+USVX
+US Market Volatility Index
+GSPC
+S&P 500 Market Index
+These stocks are chosen because:
+MSFT and AAPL represent strong technology companies
+IBM represents traditional IT industry
+GSPC represents the overall market
+USVX represents market volatility
+4. Features in the Dataset
+Each stock dataset contains:
+Feature
+Meaning
+Date
+Trading day
+Open
+Price at market opening
+High
+Highest price of the day
+Low
+Lowest price of the day
+Close
+Final trading price
+Adjusted Close
+Price adjusted for dividends & splits
+Volume
+Number of shares traded
+These values describe the complete trading behavior of a stock on a particular day.
+5. Data Preprocessing
+Before applying machine learning, the data must be cleaned and prepared.
+This includes:
+Removing missing or corrupted records
+Aligning dates across all stock datasets
+Normalizing numerical values
+Removing noise and irregularities
+This step improves model accuracy and ensures fair comparison between stocks.
+6. Feature Engineering
+From the raw stock data, new features are created to help the model understand market behavior, such as:
+Price change
+Daily return
+Moving averages
+Volatility
+Trend indicators
+These features give the model deeper insight into how stocks behave over time.
+7. Target Variable
+The model predicts either:
+The next day closing price (regression), or
+The price direction (up or down) (classification)
+This allows the system to answer:
+“Will the stock go up or down tomorrow?”
+or
+“What will be the next price?”
+8. Why Random Forest?
+Random Forest is chosen because:
+It combines multiple decision trees
+It reduces overfitting
+It works well with financial data
+It handles non-linear relationships
+It is robust to noise and missing values
+In stock markets, patterns are complex and unpredictable. Random Forest is well suited to handle such complexity.
+9. Model Training Process
+The model learns from historical stock data by:
+Studying relationships between price, volume, and trends
+Understanding how market indices (GSPC, USVX) influence individual stocks
+Learning patterns that lead to price increases or decreases
+Once trained, the model can predict future stock behavior.
+10. Model Evaluation
+The model is evaluated using performance metrics:
+For price prediction:
+Mean Absolute Error (MAE)
+Root Mean Square Error (RMSE)
+R² Score
+For direction prediction:
+Accuracy
+Precision
+Recall
+F1-score
+These metrics show how reliable and accurate the model is.
+11. Results
+The model finds that:
+Technology stocks like MSFT and AAPL show strong predictable patterns
+GSPC strongly influences individual stocks
+USVX affects market volatility and risk
+Random Forest provides stable and reliable predictions
+12. Applications
+This system can be used for:
+Stock trading support
+Portfolio management
+Risk analysis
+Market trend prediction
+Financial research
+13. Conclusion
+The Stock Market Prediction System using Random Forest successfully analyzes historical stock data from MSFT, IBM, USVX, AAPL, and GSPC to forecast future market behavior.
+By combining multiple market indicators, the system provides accurate and reliable predictions that help investors make better financial decisions.
