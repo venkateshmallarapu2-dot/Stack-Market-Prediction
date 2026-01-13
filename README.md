@@ -1,33 +1,106 @@
-​1. Project Overview
-​This project uses a Random Forest machine learning model to predict stock price movements based on historical data. It is deployed as a web application with a Flask API backend and a responsive HTML/CSS/JS frontend.
-​Dataset Components
-​The dataset includes historical price data (Open, High, Low, Close, Volume) for the following tickers:
-​MSFT: Microsoft Corporation
-​IBM: International Business Machines
-​AAPL: Apple Inc.
-​GSPC: S&P 500 Index (Market Benchmark)
-​USVX: Volatility Index (Often used as a market "fear gauge")
-​2. Machine Learning Model: Random Forest
-​The Random Forest algorithm was chosen for its ability to handle non-linear relationships and its robustness against overfitting.
-​Type: Ensemble Learning (Bagging).
-​Process: It constructs multiple decision trees during training and outputs the mean prediction (regression) or the majority vote (classification) of the individual trees.
-​Features: Includes technical indicators like Moving Averages (SMA/EMA), Relative Strength Index (RSI), and lagged price data.
-​3. Backend Deployment: Flask API
-​The Flask framework acts as the bridge between the trained Python model and the web interface.
-​app.py Logic
-​Load Model: The pre-trained Random Forest model is loaded using pickle or joblib.
-​API Endpoint: A @app.route('/predict', methods=['POST']) receives JSON data from the frontend.
-​Pre-processing: User input is converted into a format (NumPy array) the model understands.
-​Inference: model.predict(data) generates the result.
-​Response: The prediction is returned as a JSON object.
-4. Frontend: HTML, CSS, & JavaScript
-​The frontend provides a user-friendly interface to interact with the model.
-​HTML: Creates the structure (input fields for stock features, buttons, and a result display area).
-​CSS: Styles the dashboard for a professional, "fintech" look (dark mode, clean typography).
-​JavaScript (Fetch API): Captures user input and sends an asynchronous request to the Flask /predict endpoint without refreshing the page.
-5. System Architecture
 
-​User enters data into the HTML/CSS UI.
-​JavaScript sends a POST request to the Flask API.
-​Flask runs the data through the Random Forest Model.
-​The Result is sent back to the UI and displayed to the user.
+📈 Stock Market Prediction System Using Random Forest
+1. Project Title
+Stock Market Prediction Using Machine Learning and Flask API
+2. Problem Statement
+Stock market prices are highly volatile and depend on multiple factors such as company performance, market trends, and investor sentiment. Manual analysis is complex and time-consuming.
+This project aims to build an AI-based stock prediction system that can forecast future stock prices using historical data and machine learning.
+3. Objectives
+To analyze historical stock price data
+To train a machine learning model for prediction
+To predict future closing prices
+To deploy the model using Flask API
+To provide a web-based interface for users
+4. Dataset Description
+The dataset contains historical stock prices of the following companies and indices:
+Symbol
+Company / Index
+MSFT
+Microsoft
+IBM
+IBM
+USVX
+Volatility Index
+AAPL
+Apple
+GSPC
+S&P 500 Index
+Each dataset contains:
+Date
+Open price
+High price
+Low price
+Close price
+Volume
+These values represent daily trading data.
+5. Data Preprocessing
+The following steps were applied:
+Handling missing values
+Removing unnecessary columns
+Date conversion
+Feature scaling
+Creating input (X) and target (Y) variables
+Splitting data into training and testing sets
+6. Machine Learning Model
+Random Forest Regressor
+Random Forest is an ensemble learning technique that combines multiple decision trees to improve accuracy and avoid overfitting.
+It was selected because:
+It handles large datasets well
+It works well with non-linear data
+It reduces variance and improves prediction accuracy
+7. Model Training Process
+Stock data loaded
+Features such as Open, High, Low, and Volume used as inputs
+Close price used as output
+Model trained using historical data
+Performance evaluated using:
+Mean Absolute Error (MAE)
+Root Mean Square Error (RMSE)
+R² Score
+8. System Architecture
+Copy code
+
+User (Browser)
+     |
+HTML + CSS + JavaScript (Frontend)
+     |
+Flask API (Backend)
+     |
+Random Forest Model
+     |
+Prediction Result
+     |
+Displayed on Web Page
+9. Frontend
+Technologies used:
+HTML – Structure
+CSS – Styling
+JavaScript – Data handling and API calls
+User enters:
+Stock name
+Open, High, Low, Volume
+The prediction is shown on the screen.
+10. Backend – Flask API
+Flask acts as the bridge between frontend and machine learning model.
+Functions:
+Receives user input
+Loads trained Random Forest model
+Predicts stock price
+Sends result back to frontend
+11. Deployment
+The model is deployed using:
+Flask REST API
+HTML, CSS, JavaScript for UI
+The user interacts through the browser and gets real-time predictions.
+12. Advantages
+High prediction accuracy
+Easy-to-use web interface
+Real-time predictions
+Supports multiple stocks
+13. Applications
+Stock traders
+Investment firms
+Financial analysis platforms
+Educational purposes
+14. Conclusion
+This project successfully predicts stock prices using Random Forest and historical market data. The Flask-based deployment allows users to access predictions through a web interface, making the system practical and user-friendly.
